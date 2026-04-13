@@ -77,18 +77,27 @@ export default function Certificates() {
 
   const uploadImage = async () => {
     if (!file) return
-    setUploading(true)
-    const fileName = `cert-${Date.now()}-${file.name}`
-    await supabase.storage.from('certificate-images').upload(fileName, file)
-    const { data } = supabase.storage.from('certificate-images').getPublicUrl(fileName)
-    await supabase.from('certificates').insert({ Img: data.publicUrl })
-    setFile(null); setPreview(null); setUploading(false)
-    fetchCerts()
+    try {
+      setUploading(true)
+      const fileName = `cert-${Date.now()}-${file.name}`
+      const { error: uploadError } = await supabase.storage.from('certificate-images').upload(fileName, file)
+      if (uploadError) throw new Error('Upload failed: ' + uploadError.message)
+      const { data } = supabase.storage.from('certificate-images').getPublicUrl(fileName)
+      const { error: insertError } = await supabase.from('certificates').insert({ Img: data.publicUrl })
+      if (insertError) throw new Error('Save failed: ' + insertError.message)
+      setFile(null); setPreview(null);
+      fetchCerts()
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setUploading(false)
+    }
   }
 
   const deleteCert = async (id) => {
     if (!confirm('Delete this certificate?')) return
-    await supabase.from('certificates').delete().eq('id', id)
+    const { error } = await supabase.from('certificates').delete().eq('id', id)
+    if (error) alert("Failed to delete: " + error.message)
     fetchCerts()
   }
 

@@ -61,7 +61,7 @@ export default function PresenceWidget() {
 
   const getIcon = (iconType, className = "w-5 h-5 ") => {
     const icons = {
-      spotify: <Music2 className={className}/>,
+      spotify: <Music2 className={className} />,
       vscode: <Code2 className={className} />,
       gaming: <Gamepad2 className={className} />,
       default: <Headphones className={className} />
@@ -118,26 +118,26 @@ export default function PresenceWidget() {
       <div className="w-full space-y-2">
         {activities.map((act) => {
           const colors = getColors(act.type);
-          
+
           return (
             <div key={act.key} className="group relative ">
               {/* Glass Card */}
               <div className={`relative backdrop-blur-md bg-gradient-to-br ${colors.bg} rounded-xl border ${colors.border} ${colors.glow} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300`}>
                 <div className="p-3 flex items-center gap-2.5">
-                  
+
                   {/* Icon/Image */}
                   <div className="relative flex-shrink-0">
                     <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/20 backdrop-blur-sm ring-2 ring-white/10 group-hover:ring-white/20 transition-all duration-300">
                       {act.image ? (
-                        <img 
-                          src={act.image} 
+                        <img
+                          src={act.image}
                           alt={act.title}
                           className="w-full h-full object-cover"
                         />
                       ) : act.iconImage ? (
                         <div className="w-full h-full flex items-center justify-center p-2">
-                          <img 
-                            src={act.iconImage} 
+                          <img
+                            src={act.iconImage}
                             alt={act.title}
                             className="w-full h-full object-contain"
                           />
@@ -150,7 +150,7 @@ export default function PresenceWidget() {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Music bars - hanya Spotify */}
                     {act.type === "spotify" && (
                       <div className="absolute -bottom-0.5 -right-0.5 bg-green-500 rounded p-0.5 shadow-lg">
@@ -171,7 +171,7 @@ export default function PresenceWidget() {
                         {getActivityLabel(act.type)}
                       </span>
                     </div>
-                    
+
                     <h3 className="text-white font-bold text-sm truncate mb-0.5">
                       {act.title}
                     </h3>

@@ -354,7 +354,8 @@ export default function Projects() {
 
   const uploadImage = async (f) => {
     const fileName = `${Date.now()}-${f.name}`;
-    await supabase.storage.from("project-images").upload(fileName, f);
+    const { error } = await supabase.storage.from("project-images").upload(fileName, f);
+    if (error) { throw new Error('Image upload failed: ' + error.message) }
     const { data } = supabase.storage
       .from("project-images")
       .getPublicUrl(fileName);
@@ -362,34 +363,11 @@ export default function Projects() {
   };
 
   const handleCreate = async (form, file) => {
-    setUploading(true);
-    let imgUrl = "";
-    if (file) imgUrl = await uploadImage(file);
-    await supabase.from("projects").insert({
-      Title: form.Title,
-      Description: form.Description,
-      Img: imgUrl,
-      TechStack: form.TechStack.split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      Features: form.Features.split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      Link: form.Link,
-      Github: form.Github,
-    });
-    setShowCreate(false);
-    setUploading(false);
-    fetchProjects();
-  };
-
-  const handleEdit = async (form, file) => {
-    setUploading(true);
-    let imgUrl = editProject.Img || "";
-    if (file) imgUrl = await uploadImage(file);
-    await supabase
-      .from("projects")
-      .update({
+    try {
+      setUploading(true);
+      let imgUrl = "";
+      if (file) imgUrl = await uploadImage(file);
+      const { error } = await supabase.from("projects").insert({
         Title: form.Title,
         Description: form.Description,
         Img: imgUrl,
@@ -401,16 +379,52 @@ export default function Projects() {
           .filter(Boolean),
         Link: form.Link,
         Github: form.Github,
-      })
-      .eq("id", editProject.id);
-    setEditProject(null);
-    setUploading(false);
-    fetchProjects();
+      });
+      if (error) throw new Error('Failed to save project: ' + error.message);
+      setShowCreate(false);
+      fetchProjects();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleEdit = async (form, file) => {
+    try {
+      setUploading(true);
+      let imgUrl = editProject.Img || "";
+      if (file) imgUrl = await uploadImage(file);
+      const { error } = await supabase
+        .from("projects")
+        .update({
+          Title: form.Title,
+          Description: form.Description,
+          Img: imgUrl,
+          TechStack: form.TechStack.split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          Features: form.Features.split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          Link: form.Link,
+          Github: form.Github,
+        })
+        .eq("id", editProject.id);
+      if (error) throw new Error('Failed to update project: ' + error.message);
+      setEditProject(null);
+      fetchProjects();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const deleteProject = async (id) => {
     if (!confirm("Delete this project?")) return;
-    await supabase.from("projects").delete().eq("id", id);
+    const { error } = await supabase.from("projects").delete().eq("id", id);
+    if (error) alert("Failed to delete: " + error.message);
     fetchProjects();
   };
 
