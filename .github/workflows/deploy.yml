@@ -32,6 +32,9 @@ jobs:
         run: npm install --legacy-peer-deps
       - name: Build
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: "https://njnlumcwtumyspkyotxc.supabase.co"
+          VITE_SUPABASE_ANON_KEY: "sb_publishable_O2RFeIbZL2Jar2hB7kHzMw_JLGTK7Ev"
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
