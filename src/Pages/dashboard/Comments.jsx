@@ -231,7 +231,7 @@ export default function Comments() {
                   {/* Avatar */}
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center shrink-0">
                     <img
-                      src={comment.profile_image || "/default-avatar.jpg"}
+                      src={comment.profile_image || `${import.meta.env.BASE_URL}default-avatar.jpg`}
                       alt="Avatar"
                       className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover"
                     />
