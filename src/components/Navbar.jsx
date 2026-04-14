@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [activeSection, setActiveSection] = useState("Home");
+    const navigate = useNavigate();
 
     const navItems = [
-        { href: "#Home", label: "Home" },
-        { href: "#About", label: "About" },
-        { href: "#Portofolio", label: "Portofolio" },
-        { href: "#Contact", label: "Contact" },
+        { id: "Home", label: "Home" },
+        { id: "About", label: "About" },
+        { id: "Portofolio", label: "Portofolio" },
+        { id: "Contact", label: "Contact" },
     ];
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
             const sections = navItems.map(item => {
-                const section = document.querySelector(item.href);
+                const section = document.getElementById(item.id);
                 if (section) {
                     return {
-                        id: item.href.replace("#", ""),
+                        id: item.id,
                         offset: section.offsetTop - 550,
                         height: section.offsetHeight
                     };
@@ -52,9 +54,8 @@ const Navbar = () => {
         }
     }, [isOpen]);
 
-    const scrollToSection = (e, href) => {
-        e.preventDefault();
-        const section = document.querySelector(href);
+    const scrollToSection = (id) => {
+        const section = document.getElementById(id);
         if (section) {
             const top = section.offsetTop - 100;
             window.scrollTo({
@@ -78,40 +79,40 @@ const Navbar = () => {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <div className="flex-shrink-0">
-                        <a
-                            href="#Home"
-                            onClick={(e) => scrollToSection(e, "#Home")}
+                        <button
+                            onClick={() => scrollToSection("Home")}
                             className="text-xl font-bold bg-gradient-to-r from-[#a855f7] to-[#6366f1] bg-clip-text text-transparent"
                         >
                             Michael
-                        </a>
+                        </button>
                     </div>
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:block">
                         <div className="ml-8 flex items-center space-x-8">
                             {navItems.map((item) => (
-                                <a
+                                <button
                                     key={item.label}
-                                    href={item.href}
-                                    onClick={(e) => scrollToSection(e, item.href)}
+                                    onClick={() => scrollToSection(item.id)}
                                     className="group relative px-1 py-2 text-sm font-medium"
                                 >
                                     <span
-                                        className={`relative z-10 transition-colors duration-300 ${activeSection === item.href.substring(1)
+                                        className={`relative z-10 transition-colors duration-300 ${
+                                            activeSection === item.id
                                                 ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"
                                                 : "text-[#e2d3fd] group-hover:text-white"
-                                            }`}
+                                        }`}
                                     >
                                         {item.label}
                                     </span>
                                     <span
-                                        className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] transform origin-left transition-transform duration-300 ${activeSection === item.href.substring(1)
+                                        className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] transform origin-left transition-transform duration-300 ${
+                                            activeSection === item.id
                                                 ? "scale-x-100"
                                                 : "scale-x-0 group-hover:scale-x-100"
-                                            }`}
+                                        }`}
                                     />
-                                </a>
+                                </button>
                             ))}
                         </div>
                     </div>
@@ -142,14 +143,14 @@ const Navbar = () => {
             >
                 <div className="px-4 py-6 space-y-4">
                     {navItems.map((item, index) => (
-                        <a
+                        <button
                             key={item.label}
-                            href={item.href}
-                            onClick={(e) => scrollToSection(e, item.href)}
-                            className={`block px-4 py-3 text-lg font-medium transition-all duration-300 ease ${activeSection === item.href.substring(1)
+                            onClick={() => scrollToSection(item.id)}
+                            className={`block w-full text-left px-4 py-3 text-lg font-medium transition-all duration-300 ease ${
+                                activeSection === item.id
                                     ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"
                                     : "text-[#e2d3fd] hover:text-white"
-                                }`}
+                            }`}
                             style={{
                                 transitionDelay: `${index * 100}ms`,
                                 transform: isOpen ? "translateX(0)" : "translateX(50px)",
@@ -157,7 +158,7 @@ const Navbar = () => {
                             }}
                         >
                             {item.label}
-                        </a>
+                        </button>
                     ))}
                 </div>
             </div>
